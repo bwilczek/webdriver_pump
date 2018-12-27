@@ -1,0 +1,14 @@
+name: webdriver_pump
+version: 0.1.0
+
+authors:
+  - Bartek Wilczek <bwilczek@gmail.com>
+
+dependencies:
+  openssl:
+    github: ysbaddaden/selenium-webdriver-crystal
+    branch: master
+
+crystal: 0.27.0
+
+license: MIT

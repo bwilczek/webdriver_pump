@@ -5,9 +5,9 @@ authors:
   - Bartek Wilczek <bwilczek@gmail.com>
 
 dependencies:
-  openssl:
+  selenium:
     github: ysbaddaden/selenium-webdriver-crystal
-    branch: master
+    version: "~> 0.4"
 
 crystal: 0.27.0
 

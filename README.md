@@ -19,21 +19,51 @@ dependencies:
 
 ```crystal
 require "webdriver_pump"
+
+# define the page model, for example:
+class GreeterPage < WebdriverPump::Page
+  url "https://bwilczek.github.io/watir_pump_tutorial/greeter.html"
+  element :header, { action: :text, locator: -> { root.find_element(:xpath, "//h1") } }
+  element :fill_name, { action: :send_keys, locator: {id: "name"} }
+  element :submit, { action: :click, locator: {id: "set_name"} }
+  element :greeting, { action: :text, locator: {id: "greeting"} }
+end
+
+# use it in specs, for example:
+describe WebdriverPump do
+  it "Page without components" do
+    GreeterPage.new(session).open do |p|
+      p.header.should eq "Greeter app"
+      p.fill_name "Crystal"
+      p.submit
+      p.greeting.should eq "Hello Crystal!"
+    end
+  end
+end
 ```
 
-TODO: Write usage instructions here
+See `/spec` for details.
 
 ## Development
 
-TODO: Write development instructions here
+[x] Page without components
+[x] Declare raw WebDriver elements with webdriver locators
+[x] Declare raw WebDriver elements with lambdas
+[x] Declare actions on WebDriver elements
+[ ] Declare reusable Components
+[ ] Nest Components
+[ ] Fill in complex forms: RadioGroups, SelectLists
+[ ] Upload files
+[ ] Port WatirPump's form helpers
 
 ## Contributing
 
 1. Fork it (<https://github.com/bwilczek/webdriver_pump/fork>)
 2. Create your feature branch (`git checkout -b my-new-feature`)
-3. Commit your changes (`git commit -am 'Add some feature'`)
-4. Push to the branch (`git push origin my-new-feature`)
-5. Create a new Pull Request
+3. Test your changes, add relevant specs
+4. Commit your changes (`git commit -am 'Add some feature'`)
+5. Push to the branch (`git push origin my-new-feature`)
+6. Create a new Pull Request
 
 ## Contributors
 

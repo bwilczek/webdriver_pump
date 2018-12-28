@@ -1,5 +1,7 @@
 require "selenium"
 
+require "./wait"
+
 module WebdriverPump
   class Component
     getter :root
@@ -31,6 +33,27 @@ module WebdriverPump
       end
     end
 
+    macro elements(name, params)
+      def {{name.id}}(*args)
+        {% if params[:locator].class_name == "ProcLiteral" %}
+          elements = dynamically_locate_elements({{params[:locator]}})
+        {% elsif params[:locator].class_name == "NamedTupleLiteral" %}
+          by = :{{params[:locator].keys.first.id}}
+          selector = "{{params[:locator].values.first.id}}"
+          elements = locate_elements(by: by, selector: selector)
+        {% else %}
+          raise "element macro: Unsupported locator"
+        {% end %}
+
+        {% if params[:class] %}
+          elements.map! do |element|
+            {{params[:class]}}.new(session, element)
+          end
+        {% end %}
+        elements
+      end
+    end
+
     def initialize(@session : Selenium::Session, @root : Selenium::WebElement)
     end
 
@@ -38,9 +61,22 @@ module WebdriverPump
       root.find_element(by, selector)
     end
 
+    def locate_elements(*, by, selector)
+      root.find_elements(by, selector)
+    end
+
     def dynamically_locate_element(expression)
       # TODO: check if the returned value is an element
       expression.call
+    end
+
+    def dynamically_locate_elements(expression)
+      # TODO: check if the returned value is an element collection
+      expression.call
+    end
+
+    def wait_until(*, timeout=10, interval=0.2, &blk)
+      WebdriverPump::Wait.until(timeout: timeout, interval: timeout, &blk)
     end
   end
 end

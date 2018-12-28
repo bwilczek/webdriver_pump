@@ -11,7 +11,7 @@ module WebdriverPump
     end
 
     def initialize(@session : Selenium::Session)
-      # Fake root required to match expected types. Proper one is set in #open
+      # HACK: Fake root is required to match expected variable type. Proper one is set in #open
       @root = Selenium::WebElement.new(@session, JSON.parse(%({"ELEMENT": "body"})).as_h)
     end
 

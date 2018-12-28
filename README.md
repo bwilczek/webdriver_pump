@@ -46,15 +46,17 @@ See `/spec` for details.
 
 ## Development
 
-[x] Page without components
-[x] Declare raw WebDriver elements with webdriver locators
-[x] Declare raw WebDriver elements with lambdas
-[x] Declare actions on WebDriver elements
-[ ] Declare reusable Components
-[ ] Nest Components
-[ ] Fill in complex forms: RadioGroups, SelectLists
-[ ] Upload files
-[ ] Port WatirPump's form helpers
+- [x] Page without components
+- [x] Declare raw WebDriver elements with webdriver locators
+- [x] Declare raw WebDriver elements with lambdas
+- [x] Declare actions on WebDriver elements
+- [ ] Declare reusable Components
+- [ ] Nest Components
+- [ ] Support `loaded?` predicate for Pages
+- [ ] Wait for AJAX-driven Components to be ready to interact
+- [ ] Fill in complex forms: RadioGroups, SelectLists
+- [ ] Port WatirPump's form helpers
+- [ ] Upload files (?)
 
 ## Contributing
 

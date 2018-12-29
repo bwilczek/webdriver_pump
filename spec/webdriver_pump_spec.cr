@@ -23,10 +23,7 @@ class ToDoList < WebdriverPump::Component
     size_before = items.size
     fill_item(item)
     submit
-    wait_until do
-      pp "#{items.size} vs #{size_before+1}"
-      items.size == size_before+1
-    end
+    wait.until { items.size == size_before+1 }
   end
 end
 

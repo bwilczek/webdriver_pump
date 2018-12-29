@@ -1,9 +1,9 @@
 module WebdriverPump
   module Wait
-    def self.until(*, timeout=10, interval=0.2)
+    # TODO: make time outs configurable
+    def self.until(*, timeout=5, interval=0.2, &blk)
       start = Time.now
-      while(Time.now < (start + timeout.seconds))
-        pp "aaa"
+      while Time.now < (start + timeout.seconds)
         res = yield
         return res if res
         sleep interval

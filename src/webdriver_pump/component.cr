@@ -75,8 +75,8 @@ module WebdriverPump
       expression.call
     end
 
-    def wait_until(*, timeout=10, interval=0.2, &blk)
-      WebdriverPump::Wait.until(timeout: timeout, interval: timeout, &blk)
+    def wait
+      WebdriverPump::Wait
     end
   end
 end

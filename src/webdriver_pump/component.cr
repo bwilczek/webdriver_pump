@@ -7,17 +7,35 @@ module WebdriverPump
     getter :root
     getter :session
 
+    FORM_ACCESSRS = {
+      text_field: {get: "attribute(\"value\")", set: "send_keys(val)"},
+      text_area: {get: "attribute(\"value\")", set: "send_keys(val)"},
+    }
+
+    # TODO: DRY up
+    macro element_accessor(name, params)
+      def {{name.id}}
+        element = locate_element({{params[:locator]}})
+        element.{{FORM_ACCESSRS[params[:type]][:get].id}}
+      end
+
+      def {{name.id}}=(val)
+        element = locate_element({{params[:locator]}})
+        element.{{FORM_ACCESSRS[params[:type]][:set].id}}
+      end
+    end
+
     macro element_getter(name, params)
       def {{name.id}}
         element = locate_element({{params[:locator]}})
-        element.attribute("value")
+        element.{{FORM_ACCESSRS[params[:type]][:get].id}}
       end
     end
 
     macro element_setter(name, params)
       def {{name.id}}=(val)
         element = locate_element({{params[:locator]}})
-        element.send_keys val
+        element.{{FORM_ACCESSRS[params[:type]][:set].id}}
       end
     end
 

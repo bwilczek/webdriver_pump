@@ -55,7 +55,7 @@ See `/spec` for details.
 - [x] Collections of Components
 - [x] Nest Components
 - [x] Wait for AJAX-driven Components to be ready to interact
-- [ ] ComponentCollection class
+- [x] ComponentCollection class
 - [ ] Fill in complex forms: RadioGroups, SelectLists
 - [ ] Parametrize Page url
 - [ ] Support `loaded?` predicate for Pages

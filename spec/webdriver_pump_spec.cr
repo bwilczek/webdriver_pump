@@ -1,6 +1,7 @@
 require "./spec_helper"
 
 require "../src/webdriver_pump/page"
+require "../src/webdriver_pump/component_collection"
 
 session_helper = WebdriverSessionHelper.new
 session = session_helper.session
@@ -52,6 +53,10 @@ class ToDoListNested < WebdriverPump::Component
     wait.until { items.size == size_before+1 }
   end
 
+  def size
+    items.size
+  end
+
   def [](item_name)
     ret = items.find { |i| i.name == item_name }
     raise "List item with name=#{item_name} not found" unless ret
@@ -71,6 +76,25 @@ class ToDoListsPage < WebdriverPump::Page
     raise "List with title=#{title} not found" unless ret
     ret
   end
+end
+
+#############################################
+
+class ToDoListNestedCollection < WebdriverPump::ComponentCollection(ToDoListNested)
+  def [](title)
+    ret = find { |l| l.title == title }
+    raise "List with title=#{title} not found" unless ret
+    ret
+  end
+end
+
+class ToDoListsWithComponentCollectionPage < WebdriverPump::Page
+  url "https://bwilczek.github.io/watir_pump_tutorial/todo_lists.html"
+  elements :todo_lists, {
+    class: ToDoListNested,
+    collection_class: ToDoListNestedCollection,
+    locator: {xpath: "//div[@role='todo_list']"}
+  }
 end
 
 ##############################################
@@ -101,6 +125,17 @@ describe WebdriverPump do
       list.items.size.should eq 4
       list["Mozarella"].delete
       list.items.size.should eq 3
+    end
+  end
+
+  it "Page with ComponentCollection" do
+    ToDoListsWithComponentCollectionPage.new(session).open do |p|
+      p.todo_lists.size.should eq 3
+      p.todo_lists["Groceries"].size.should eq 3
+      p.todo_lists["Groceries"].add("Avocado")
+      p.todo_lists["Groceries"].size.should eq 4
+      p.todo_lists["Groceries"]["Avocado"].delete
+      p.todo_lists["Groceries"].size.should eq 3
     end
   end
 end

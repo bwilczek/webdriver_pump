@@ -52,9 +52,10 @@ See `/spec` for details.
 - [x] Declare actions on WebDriver elements
 - [x] Declare reusable Components
 - [x] Collections of elements
-- [ ] Collections of Components
-- [ ] Nest Components
+- [x] Collections of Components
+- [x] Nest Components
 - [x] Wait for AJAX-driven Components to be ready to interact
+- [ ] ComponentCollection class
 - [ ] Fill in complex forms: RadioGroups, SelectLists
 - [ ] Parametrize Page url
 - [ ] Support `loaded?` predicate for Pages

@@ -42,15 +42,20 @@ module WebdriverPump
           selector = "{{params[:locator].values.first.id}}"
           elements = locate_elements(by: by, selector: selector)
         {% else %}
-          raise "element macro: Unsupported locator"
+          raise "elements macro: Unsupported locator"
         {% end %}
 
         {% if params[:class] %}
-          elements.map! do |element|
+          elements = elements.map do |element|
             {{params[:class]}}.new(session, element)
           end
         {% end %}
-        elements
+
+        {% if params[:collection_class] %}
+          {{params[:collection_class]}}.new(elements)
+        {% else %}
+          elements
+        {% end %}
       end
     end
 

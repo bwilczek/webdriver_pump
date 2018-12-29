@@ -22,7 +22,7 @@ module WebdriverPump
     end
 
     def use
-      # TODO: wait until loaded?
+      wait.until { loaded? }
       yield self
     end
 

@@ -42,7 +42,7 @@ describe WebdriverPump do
 end
 ```
 
-See `/spec` for details.
+See `/spec/*_spec.cr` for details.
 
 ## Development
 
@@ -58,8 +58,8 @@ See `/spec` for details.
 - [x] ComponentCollection class
 - [ ] Fill in complex forms: RadioGroups, SelectLists
 - [ ] Parametrize Page url
-- [ ] Support `loaded?` predicate for Pages
-- [ ] Add support for base url
+- [x] Support `loaded?` predicate for Pages
+- [ ] Add support for base url (?)
 - [ ] Port WatirPump's form helpers (?)
 - [ ] Upload files (?)
 

@@ -7,43 +7,39 @@ module WebdriverPump
     getter :root
     getter :session
 
+    macro element_getter(name, params)
+      def {{name.id}}
+        element = locate_element({{params[:locator]}})
+        element.attribute("value")
+      end
+    end
+
+    macro element_setter(name, params)
+      def {{name.id}}=(val)
+        element = locate_element({{params[:locator]}})
+        element.send_keys val
+      end
+    end
+
     macro element(name, params)
       def {{name.id}}(*args)
-        {% if params[:locator].class_name == "ProcLiteral" %}
-          element = dynamically_locate_element({{params[:locator]}})
-        {% elsif params[:locator].class_name == "NamedTupleLiteral" %}
-          by = :{{params[:locator].keys.first.id}}
-          selector = "{{params[:locator].values.first.id}}"
-          element = locate_element(by: by, selector: selector)
-        {% else %}
-          raise "element macro: Unsupported locator"
-        {% end %}
-
-        ret = element
+        element = locate_element({{params[:locator]}})
 
         {% if params[:class] %}
-          ret = {{params[:class]}}.new(session, element)
+          element = {{params[:class]}}.new(session, element)
         {% end %}
 
         {% if params[:action] %}
-          ret.{{params[:action].id}}(*args)
+          element.{{params[:action].id}}(*args)
         {% else %}
-          ret
+          element
         {% end %}
       end
     end
 
     macro elements(name, params)
       def {{name.id}}(*args)
-        {% if params[:locator].class_name == "ProcLiteral" %}
-          elements = dynamically_locate_elements({{params[:locator]}})
-        {% elsif params[:locator].class_name == "NamedTupleLiteral" %}
-          by = :{{params[:locator].keys.first.id}}
-          selector = "{{params[:locator].values.first.id}}"
-          elements = locate_elements(by: by, selector: selector)
-        {% else %}
-          raise "elements macro: Unsupported locator"
-        {% end %}
+        elements = locate_elements({{params[:locator]}})
 
         {% if params[:class] %}
           elements = elements.map do |element|
@@ -62,22 +58,30 @@ module WebdriverPump
     def initialize(@session : Selenium::Session, @root : Selenium::WebElement)
     end
 
-    def locate_element(*, by, selector)
-      root.find_element(by, selector)
+    def locate_element(locator)
+      if locator.is_a?(Proc)
+        # TODO: validate returned type
+        return locator.call
+      elsif locator.is_a?(NamedTuple)
+        by = locator.keys.first
+        selector = locator.values.first
+        return root.find_element(by, selector)
+      else
+        raise "element macro: Unsupported locator"
+      end
     end
 
-    def locate_elements(*, by, selector)
-      root.find_elements(by, selector)
-    end
-
-    def dynamically_locate_element(expression)
-      # TODO: check if the returned value is an element
-      expression.call
-    end
-
-    def dynamically_locate_elements(expression)
-      # TODO: check if the returned value is an element collection
-      expression.call
+    def locate_elements(locator)
+      if locator.is_a?(Proc)
+        # TODO: validate returned type
+        return locator.call
+      elsif locator.is_a?(NamedTuple)
+        by = locator.keys.first
+        selector = locator.values.first
+        return root.find_elements(by, selector)
+      else
+        raise "element macro: Unsupported locator"
+      end
     end
 
     def wait

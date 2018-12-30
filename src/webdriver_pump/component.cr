@@ -7,35 +7,26 @@ module WebdriverPump
     getter :root
     getter :session
 
-    FORM_ACCESSRS = {
-      text_field: {get: "attribute(\"value\")", set: "send_keys(val)"},
-      text_area: {get: "attribute(\"value\")", set: "send_keys(val)"},
-    }
-
     # TODO: DRY up
     macro element_accessor(name, params)
       def {{name.id}}
-        element = locate_element({{params[:locator]}})
-        element.{{FORM_ACCESSRS[params[:type]][:get].id}}
+        get_element_value({{params[:locator]}}, {{params[:type]}})
       end
 
       def {{name.id}}=(val)
-        element = locate_element({{params[:locator]}})
-        element.{{FORM_ACCESSRS[params[:type]][:set].id}}
+        set_element_value({{params[:locator]}}, {{params[:type]}}, val)
       end
     end
 
     macro element_getter(name, params)
       def {{name.id}}
-        element = locate_element({{params[:locator]}})
-        element.{{FORM_ACCESSRS[params[:type]][:get].id}}
+        get_element_value({{params[:locator]}}, {{params[:type]}})
       end
     end
 
     macro element_setter(name, params)
       def {{name.id}}=(val)
-        element = locate_element({{params[:locator]}})
-        element.{{FORM_ACCESSRS[params[:type]][:set].id}}
+        set_element_value({{params[:locator]}}, {{params[:type]}}, val)
       end
     end
 
@@ -104,6 +95,72 @@ module WebdriverPump
 
     def wait
       WebdriverPump::Wait
+    end
+
+    # GETTERS #############################
+
+    def get_element_value(locator, type)
+      case type
+      when :text_field, :text_area
+        get_text_value(locator)
+      when :radio_group
+        get_radio_group_value(locator)
+      else
+        raise UnsupportedFormElement.new(type)
+      end
+    end
+
+    def get_text_value(locator)
+      element = locate_element(locator)
+      element.attribute("value")
+    end
+
+    def get_radio_group_value(locator)
+      elements = locate_elements(locator)
+      elements.each do |el|
+        next unless el.selected?
+        begin
+          label = el.find_element(:xpath, "./parent::label")
+        rescue
+          id = el.attribute("id")
+          label = root.find_element(:xpath, ".//label[@for='#{id}']")
+        end
+        return label.text
+      end
+    end
+
+    # SETTERS #############################
+
+    def set_element_value(locator, type, value)
+      case type
+      when :text_field, :text_area
+        set_text_value(locator, value)
+      when :radio_group
+        set_radio_group_value(locator, value)
+      else
+        raise UnsupportedFormElement.new(type)
+      end
+    end
+
+    def set_text_value(locator, value)
+      element = locate_element(locator)
+      element.send_keys(value)
+    end
+
+    def set_radio_group_value(locator, value)
+      elements = locate_elements(locator)
+      elements.each do |el|
+        begin
+          label = el.find_element(:xpath, "./parent::label")
+        rescue
+          id = el.attribute("id")
+          label = root.find_element(:xpath, ".//label[@for='#{id}']")
+        end
+        if label.text == value
+          label.click
+          return
+        end
+      end
     end
   end
 end

@@ -64,6 +64,27 @@ module WebdriverPump
       end
     end
 
+    macro fill_form(name, params)
+      def {{name.id}}(data : NamedTuple)
+        {% for field in params[:fields] %}
+          self.{{field.id}} = data[{{field}}]
+        {% end %}
+        {% if params[:submit] %}
+          {{params[:submit].id}}
+        {% end %}
+      end
+    end
+
+    macro form_data(name, params)
+      def {{name.id}} : NamedTuple
+        {
+        {% for field in params[:fields] %}
+          {{field.id}}: self.{{field.id}},
+        {% end %}
+        }
+      end
+    end
+
     def initialize(@session : Selenium::Session, @root : Selenium::WebElement)
     end
 
@@ -105,6 +126,8 @@ module WebdriverPump
         get_text_value(locator)
       when :radio_group
         get_radio_group_value(locator)
+      when :checkbox
+        get_checkbox(locator)
       else
         raise UnsupportedFormElement.new(type)
       end
@@ -129,14 +152,20 @@ module WebdriverPump
       end
     end
 
+    def get_checkbox(locator)
+      locate_element(locator).selected?
+    end
+
     # SETTERS #############################
 
-    def set_element_value(locator, type, value)
+    def set_element_value(locator, type, value : String|Bool)
       case type
       when :text_field, :text_area
-        set_text_value(locator, value)
+        set_text_value(locator, value.to_s)
       when :radio_group
-        set_radio_group_value(locator, value)
+        set_radio_group_value(locator, value.to_s)
+      when :checkbox
+        set_checkbox(locator, !!value)
       else
         raise UnsupportedFormElement.new(type)
       end
@@ -161,6 +190,11 @@ module WebdriverPump
           return
         end
       end
+    end
+
+    def set_checkbox(locator, value)
+      element = locate_element(locator)
+      element.click if element.selected? != value
     end
   end
 end

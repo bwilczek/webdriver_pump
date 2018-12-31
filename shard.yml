@@ -6,8 +6,10 @@ authors:
 
 dependencies:
   selenium:
-    github: ysbaddaden/selenium-webdriver-crystal
-    version: "~> 0.4"
+    github: bwilczek/selenium-webdriver-crystal
+    commit: c8bea37c5b3fa9c08574acf015bcad41be12c9f4
+    # github: ysbaddaden/selenium-webdriver-crystal
+    # version: "~> 0.4"
 
 crystal: 0.27.0
 

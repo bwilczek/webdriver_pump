@@ -1,32 +1,54 @@
 require "selenium"
 
 require "./wait"
+require "./exceptions"
 
 module WebdriverPump
   class Component
     getter :root
     getter :session
 
-    # TODO: DRY up
-    macro element_accessor(name, params)
-      def {{name.id}}
-        get_element_value({{params[:locator]}}, {{params[:type]}})
-      end
-
-      def {{name.id}}=(val)
-        set_element_value({{params[:locator]}}, {{params[:type]}}, val)
-      end
-    end
-
     macro element_getter(name, params)
       def {{name.id}}
-        get_element_value({{params[:locator]}}, {{params[:type]}})
+        {% if params[:type] == :text_field %}
+          get_text_value({{params[:locator]}})
+        {% elsif params[:type] == :text_area %}
+          get_text_value({{params[:locator]}})
+        {% elsif params[:type] == :radio_group %}
+          get_radio_group_value({{params[:locator]}})
+        {% elsif params[:type] == :checkbox %}
+          get_checkbox_value({{params[:locator]}})
+        {% elsif params[:type] == :checkbox_group %}
+          get_checkbox_group_values({{params[:locator]}})
+        {% elsif params[:type] == :select_list %}
+          get_select_list_value({{params[:locator]}})
+        {% elsif params[:type] == :multi_select_list %}
+          get_multi_select_list_values({{params[:locator]}})
+        {% else %}
+          raise WebdriverPump::UnsupportedFormElement.new({{params[:type]}})
+        {% end %}
       end
     end
 
     macro element_setter(name, params)
       def {{name.id}}=(val)
-        set_element_value({{params[:locator]}}, {{params[:type]}}, val)
+        {% if params[:type] == :text_field %}
+          set_text_value({{params[:locator]}}, val)
+        {% elsif params[:type] == :text_area %}
+          set_text_value({{params[:locator]}}, val)
+        {% elsif params[:type] == :radio_group %}
+          set_radio_group_value({{params[:locator]}}, val)
+        {% elsif params[:type] == :checkbox %}
+          set_checkbox_value({{params[:locator]}}, val)
+        {% elsif params[:type] == :checkbox_group %}
+          set_checkbox_group_values({{params[:locator]}}, val)
+        {% elsif params[:type] == :select_list %}
+          set_select_list_value({{params[:locator]}}, val)
+        {% elsif params[:type] == :multi_select_list %}
+          set_multi_select_list_values({{params[:locator]}}, val)
+        {% else %}
+          raise WebdriverPump::UnsupportedFormElement.new({{params[:type]}})
+        {% end %}
       end
     end
 
@@ -120,19 +142,6 @@ module WebdriverPump
 
     # GETTERS #############################
 
-    def get_element_value(locator, type)
-      case type
-      when :text_field, :text_area
-        get_text_value(locator)
-      when :radio_group
-        get_radio_group_value(locator)
-      when :checkbox
-        get_checkbox(locator)
-      else
-        raise UnsupportedFormElement.new(type)
-      end
-    end
-
     def get_text_value(locator)
       element = locate_element(locator)
       element.attribute("value")
@@ -152,24 +161,43 @@ module WebdriverPump
       end
     end
 
-    def get_checkbox(locator)
+    def get_checkbox_value(locator)
       locate_element(locator).selected?
     end
 
-    # SETTERS #############################
+    def get_checkbox_group_values(locator)
+      elements = locate_elements(locator)
+      ret = Array(String).new
+      elements.each do |el|
+        next unless el.selected?
+        begin
+          label = el.find_element(:xpath, "./parent::label")
+        rescue
+          id = el.attribute("id")
+          label = root.find_element(:xpath, ".//label[@for='#{id}']")
+        end
+        ret << label.text
+      end
+      ret
+    end
 
-    def set_element_value(locator, type, value : String|Bool)
-      case type
-      when :text_field, :text_area
-        set_text_value(locator, value.to_s)
-      when :radio_group
-        set_radio_group_value(locator, value.to_s)
-      when :checkbox
-        set_checkbox(locator, !!value)
-      else
-        raise UnsupportedFormElement.new(type)
+    def get_select_list_value(locator)
+      element = locate_element(locator)
+      element.find_elements(:xpath, ".//option").each do |option|
+        return option.text if option.selected?
       end
     end
+
+    def get_multi_select_list_values(locator)
+      element = locate_element(locator)
+      ret = Array(String).new
+      element.find_elements(:xpath, ".//option").each do |option|
+        ret << option.text if option.selected?
+      end
+      ret
+    end
+
+    # SETTERS #############################
 
     def set_text_value(locator, value)
       element = locate_element(locator)
@@ -192,9 +220,43 @@ module WebdriverPump
       end
     end
 
-    def set_checkbox(locator, value)
+    def set_checkbox_value(locator, value)
       element = locate_element(locator)
       element.click if element.selected? != value
+    end
+
+    def set_checkbox_group_values(locator, values : Array(String))
+      elements = locate_elements(locator)
+      elements.each do |el|
+        begin
+          label = el.find_element(:xpath, "./parent::label")
+        rescue
+          id = el.attribute("id")
+          label = root.find_element(:xpath, ".//label[@for='#{id}']")
+        end
+        label.click if el.selected?
+        label.click if values.includes?(label.text)
+      end
+    end
+
+    def set_select_list_value(locator, value)
+      element = locate_element(locator)
+      element.find_elements(:xpath, ".//option").each do |option|
+        if option.text == value
+          option.click
+          return
+        end
+      end
+    end
+
+    def set_multi_select_list_values(locator, values)
+      element = locate_element(locator)
+      element.find_elements(:xpath, ".//option").each do |option|
+        option.click if option.selected?
+        if values.includes?(option.text)
+          option.click
+        end
+      end
     end
   end
 end

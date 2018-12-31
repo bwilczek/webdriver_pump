@@ -56,12 +56,13 @@ See `/spec/*_spec.cr` for details.
 - [x] Nest Components
 - [x] Wait for AJAX-driven Components to be ready to interact
 - [x] ComponentCollection class
-- [ ] Fill in complex forms: RadioGroups, SelectLists
-- [ ] Parametrize Page url
+- [x] Fill in complex forms: RadioGroups, SelectLists
+- [x] Parametrize Page url
 - [x] Support `loaded?` predicate for Pages
-- [ ] Add support for base url (?)
-- [ ] Port WatirPump's form helpers (?)
+- [x] ~Add support for base url~ do it on `webdriver` shard level
+- [x] Port WatirPump's form helpers
 - [ ] Upload files (?)
+- [ ] Update README
 
 ## Contributing
 

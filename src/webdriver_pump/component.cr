@@ -112,27 +112,29 @@ module WebdriverPump
 
     def locate_element(locator)
       if locator.is_a?(Proc)
-        # TODO: validate returned type
-        return locator.call
+        ret = locator.call
+        raise UnexpectedElementType.new(ret.class.name) unless ret.is_a?(Selenium::WebElement)
+        return ret
       elsif locator.is_a?(NamedTuple)
         by = locator.keys.first
         selector = locator.values.first
         return root.find_element(by, selector)
       else
-        raise "element macro: Unsupported locator"
+        raise UnsupportedLocator.new(locator.class.name)
       end
     end
 
     def locate_elements(locator)
       if locator.is_a?(Proc)
-        # TODO: validate returned type
-        return locator.call
+        ret = locator.call
+        raise UnexpectedElementType.new(ret.class.name) unless ret.is_a?(Array(Selenium::WebElement))
+        return ret
       elsif locator.is_a?(NamedTuple)
         by = locator.keys.first
         selector = locator.values.first
         return root.find_elements(by, selector)
       else
-        raise "element macro: Unsupported locator"
+        raise UnsupportedLocator.new(locator.class.name)
       end
     end
 

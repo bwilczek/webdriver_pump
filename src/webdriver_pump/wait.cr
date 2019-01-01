@@ -1,15 +1,32 @@
 module WebdriverPump
   module Wait
-    # TODO: make time outs configurable
-    def self.until(*, timeout=5, interval=0.2, &blk)
+    @@timeout = 15
+    @@interval = 0.2
+
+    def self.timeout
+      @@timeout
+    end
+
+    def self.timeout=(secs)
+      @@timeout = secs
+    end
+
+    def self.interval
+      @@interval
+    end
+
+    def self.interval=(secs)
+      @@interval = secs
+    end
+
+    def self.until(*, timeout=@@timeout, interval=@@interval, &blk)
       start = Time.now
       while Time.now < (start + timeout.seconds)
         res = yield
         return res if res
         sleep interval
       end
-      # TODO: create proper exception type
-      raise "Timed out while waiting for condition to be true"
+      raise TimedOut.new
     end
   end
 end

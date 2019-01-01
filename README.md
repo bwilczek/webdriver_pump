@@ -1,8 +1,6 @@
-# WORK IN PROGRESS !!
-
 # webdriver_pump
 
-This shard is a Page Object Model lib, built on top of selenium-webdriver.
+This shard is a Page Object Model lib, built on top of [selenium-webdriver-crystal](https://github.com/ysbaddaden/selenium-webdriver-crystal).
 It's a crystal port of ruby's watir_pump.
 
 ## Installation
@@ -15,7 +13,7 @@ dependencies:
 ```
 2. Run `shards install`
 
-## Usage
+## Basic usage
 
 ```crystal
 require "webdriver_pump"
@@ -42,9 +40,63 @@ describe WebdriverPump do
 end
 ```
 
-See `/spec/*_spec.cr` for details.
+## Documentation
 
-## Development
+under construction
+
+### Overview
+
+under construction
+
+### Page
+
+under construction
+
+### Component
+
+under construction
+
+#### `#element`
+
+under construction
+
+##### locator
+
+under construction
+
+##### action
+
+under construction
+
+##### class
+
+under construction
+
+#### `#elements`
+
+under construction
+
+##### locator
+
+under construction
+
+##### collection_class
+
+under construction
+
+#### Form helper macros
+
+under construction
+
+##### element_getter and element_setter
+
+under construction
+
+##### fill_form and form_data
+
+under construction
+
+## Development roadmap
 
 - [x] Page without Components
 - [x] Declare raw WebDriver elements with webdriver locators
@@ -61,8 +113,10 @@ See `/spec/*_spec.cr` for details.
 - [x] Support `loaded?` predicate for Pages
 - [x] ~Add support for base url~ do it on `webdriver` shard level
 - [x] Port WatirPump's form helpers
+- [x] Introduce Exception classes
 - [ ] Upload files (?)
 - [ ] Update README
+- [ ] Update code documentation
 
 ## Contributing
 

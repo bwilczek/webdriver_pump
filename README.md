@@ -28,8 +28,9 @@ class GreeterPage < WebdriverPump::Page
 end
 
 # use it in specs, for example:
-describe WebdriverPump do
-  it "Page without components" do
+# where `session` is an instance of Selenium::Session
+describe "Page without components" do
+  it "operates on Selenium::WebElements" do
     GreeterPage.new(session).open do |p|
       p.header.should eq "Greeter app"
       p.fill_name "Crystal"
@@ -42,59 +43,169 @@ end
 
 ## Documentation
 
-under construction
+Please refer to this chapter to learn how to define your Page Objects, and use it from your tests.
 
 ### Overview
 
-under construction
+`WebdriverPump` provides a DSL (implemented as macros) to describe the Page Object Model.
+It's a very close port of Ruby's `WatirPump` gem. There are some subtle differences in the implementation,
+but the core concepts remain the same:
+
+* **Nestable, reusable components**, to build elegant APIs
+* **Element actions**, to automatically generate simple, one liner methods (like wrappers for `click`)
+* **Page scoping**, so that it's immediately known what `page` is currently being tested
+* **Form helpers**, to operate HTML form elements with ease (WebDriver doesn't deliver here)
+* **Decorated collections**, to access element/component collections with descriptive keys
 
 ### Page
 
-under construction
+Describes the page under test. Inherits from `Component`, so please familiarize yourself
+with that class as well to fully understand what `Page` is capable of. This section covers
+only the differences from the base `Component` class.
+
+#### `url` macro
+
+Declares the full URL to the page under test.
+
+```crystal
+class GitHubUserPage < WebdriverPump::Page
+  url "https://github.com/bwilczek"
+end
+
+describe "Page's URL" do
+  it "navigates to given URL" do
+    GitHubUserPage.new(session).open do |p|
+      session.url.should eq "https://github.com/bwilczek"
+    end
+  end
+end
+```
+
+URL can be parameterized:
+
+```crystal
+class GitHubUserPage < WebdriverPump::Page
+  url "https://github.com/{user}"
+end
+
+describe "Page's URL" do
+  it "navigates to given parameterized URL" do
+    GitHubUserPage.new(session).open(params: {user: "bwilczek"}, query: {repo: "webdriver_pump""}) do |p|
+      session.url.should eq "https://github.com/bwilczek?repo=webdriver_pump"
+    end
+  end
+end
+```
+
+#### `#open`
+
+Navigates to Page's URL and executes given block in the scope of the page.
+
+```crystal
+class GitHubUserPage < WebdriverPump::Page
+  url "https://github.com/bwilczek"
+  element :user_nickname, { locator: { xpath:, "//span[@itemprop='additionalName']") } }
+end
+
+describe "Page's URL" do
+  it "navigates to given URL" do
+    GitHubUserPage.new(session).open do |page|
+      page.class.should eq GitHubUserPage
+      page.user_nickname.class.should eq Selenium::WebElement
+      page.user_nickname.text.should eq "bwilczek"
+    end
+  end
+end
+```
+
+#### `#use`
+
+Similar to `#open`, but does not perform the navigation - assumes that the page is already open.
+Useful when the navigation is triggered by an action on a different page.
+
+```crystal
+GitHubUserPage.new(session).open do { |p| p.navigate_to_repo("webdriver_pump") }
+
+GitHubRepoPage.new(session).use do |p|
+  p.class.should eq GitHubRepoPage
+end
+```
+
+#### `#loaded`
+
+Predicate method denoting if page is ready to be interacted with.
+
+In most cases creation of this method will not be required, since `WebDriver` itself
+checks if page's resources have been loaded. Only in case of more complex pages,
+that heavily rely on parts loaded dynamically over XHR providing of custom `loaded?`
+criteria might be necessary.
+
+```crystal
+class GitHubUserPage < WebdriverPump::Page
+  url "https://js-heavy.com"
+  element :created_by_xhr, { locator: {id: "content"} }
+
+  def loaded?
+    created_by_xhr.displayed?
+  end
+end
+```
 
 ### Component
 
-under construction
+*section under construction*
 
-#### `#element`
+#### `#session`
 
-under construction
+*section under construction*
+
+#### `#root`
+
+*section under construction*
+
+#### `#wait`
+
+*section under construction*
+
+#### `element` macro
+
+*section under construction*
 
 ##### locator
 
-under construction
+*section under construction*
 
 ##### action
 
-under construction
+*section under construction*
 
 ##### class
 
-under construction
+*section under construction*
 
-#### `#elements`
+#### `elements` macro
 
-under construction
+*section under construction*
 
 ##### locator
 
-under construction
+*section under construction*
 
 ##### collection_class
 
-under construction
+*section under construction*
 
 #### Form helper macros
 
-under construction
+*section under construction*
 
 ##### element_getter and element_setter
 
-under construction
+*section under construction*
 
 ##### fill_form and form_data
 
-under construction
+*section under construction*
 
 ## Development roadmap
 

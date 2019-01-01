@@ -131,7 +131,7 @@ GitHubRepoPage.new(session).use do |p|
 end
 ```
 
-#### `#loaded`
+#### `#loaded?`
 
 Predicate method denoting if page is ready to be interacted with.
 
@@ -153,19 +153,68 @@ end
 
 ### Component
 
-*section under construction*
+Components are the foundation of `WebdriverPump` models.
+They abstract out certain sub-trees of the page's DOM tree into `crystal` classes
+and hide the underlying HTML behind the business oriented API.
+
+`Pages` are the top-level components, that abstract out the complete page (DOM sub-tree starting at `//body`).
+
+Components can be nested, and grouped into collections.
+
+They are declared inside their parent components using `element` macro, with a `class` parameter, that refers to `crystal` class, a child  of `WebdriverPump::Component` (NOT a CSS class).
+
+#### `#initialize` (constructor)
+
+Usually invoked implicitly by the `element(s)` macro.
+
+Accepts two parameters:
+
+* `@session : Selenium::Session`
+* `@root : Selenium::WebElement`
+
+Example of explicit usage:
+
+```crystal
+class OrderItemDetails < WebdriverPump::Component
+  # omitted for brevity
+end
+
+class OrderPage < WebdriverPump::Page
+  # omitted for brevity
+
+  def [](name)
+    node = root.find_element(:xpath, ".//div[@class='item' and contains(text(), '#{name}')]")
+    OrderItemDetails.new(session, node)
+  end
+end
+
+OrderPage.new(session).open do |order|
+  order["Rubber hammer, 2kg"].class.should eq OrderItemDetails
+end
+```
 
 #### `#session`
 
-*section under construction*
+Reference to associated `Selenium::Session` instance.
 
 #### `#root`
 
-*section under construction*
+Mounting point of current component in the DOM tree. Type: `Selenium::WebElement`.
+
+For `Pages` it points to `//body`.
 
 #### `#wait`
 
-*section under construction*
+Reference to `WebdriverPump::Wait` module. Usage:
+
+```crystal
+wait.until { condition_is_met }
+wait.until(timeout: 19, interval: 0.3) { other_condition_is_met }
+
+# global config (optional)
+WebdriverPump::Wait.timeout = 10    # default = 15
+WebdriverPump::Wait.interval = 0.5  # default = 0.2
+```
 
 #### `element` macro
 
@@ -224,8 +273,8 @@ end
 - [x] Support `loaded?` predicate for Pages
 - [x] ~Add support for base url~ do it on `webdriver` shard level
 - [x] Port WatirPump's form helpers
+- [ ] Form helper for file upload (?)
 - [x] Introduce Exception classes
-- [ ] Upload files (?)
 - [ ] Update README
 - [ ] Update code documentation
 

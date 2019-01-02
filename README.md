@@ -316,19 +316,113 @@ Optional `Component` class to wrap each of the collection's elements.
 
 ##### collection_class
 
-Optional `ComponentCollection` class to wrap the whole collection. Useful to introduce more descriptive ways of indexing.
+Optional `ComponentCollection` class to wrap the whole collection. Useful to introduce more descriptive ways of accessing elements.
 
 #### Form helper macros
 
-*section under construction*
+`WebDriver` API itself does not provide methods to easily set and get values of HTML form elements.
+This is where `WebdriverPump`'s form helper macros come handy.
 
 ##### element_getter and element_setter
 
-*section under construction*
+These macros generate methods that set and get values for given form elements.
+Supported `types` are:
 
-##### fill_form and form_data
+* `:text_field` - expected value type: `String`
+* `:text_area` - expected value type: `String`
+* `:radio_group` - expected value type: `Array(String)`
+* `:checkbox` - expected value type: `Bool`
+* `:checkbox_group` - expected value type: `Array(String)`
+* `:select_list` - expected value type: `String`
+* `:multi_select_list` - expected value type: `Array(String)`
 
-*section under construction*
+`locator` parameter accepts the same values as for previously described macros.
+
+Example:
+
+```crystal
+class ProfilePage < WebdriverPump::Page
+  element_setter :hobbies, { type: :checkbox_group, locator: {name: "hobbies[]"} }
+  element_getter :hobbies, { type: :checkbox_group, locator: {name: "hobbies[]"} }
+end
+
+ProfilePage.new(session).open do |page|
+  page.hobbies = ["Gardening", "Knitting"]
+  page.hobbies.should eq ["Gardening", "Knitting"]
+end
+```
+
+##### fill_form
+
+This macro acts as a wrapper for calling multiple `element_setter`s at once.
+
+Let's consider the following example:
+
+```crystal
+class LoginPage < WebdriverPump::Page
+  element_setter :username, { type: :text_field, locator: {name: "username"} }
+  element_setter :password, { type: :text_field, locator: {name: "password"} }
+  element :submit_form, { locator: {id: "submit"} }
+
+  fill_form :login, { submit: :submit_form, fields: [:username, :password] }
+  # equivalent of:
+  def login(params)
+    self.username = params[:username]
+    self.password = params[:password]
+    submit_form
+  end
+end
+
+# Usage:
+LoginPage.new(session).open do |page|
+  page.login(username: "bob", password: "secret")
+end
+```
+
+`fill_form` macro expects the following parameters:
+
+* `Symbol` name of the method to be generated
+* `NamedTuple` with the following parameters
+  * `fields` - (required) Array(Symbol) - list of setters to be invoked
+  * `submit` - (optional) Symbol - name of the method to be executed after all setters
+
+##### form_data
+
+This macro acts as a wrapper for calling multiple `element_getter`s at once.
+It returns a `NamedTuple` with keys being the getter method names, and values the results that they return.
+
+Let's consider the following example:
+
+```crystal
+class SummaryPage < WebdriverPump::Page
+  element_getter :title, { type: :text_field, locator: {name: "title"} }
+
+  # form_data doesn't require `element_getters` - it will work with all methods that don't require arguments
+  element :header { locator: {xpath: "../h1"}, action: :text }
+
+  form_data :summary, { fields: [:title, :header] }
+  # equivalent of:
+  def summary
+    {
+      title: self.title,
+      header: self.header
+    }
+  end
+end
+
+# Usage:
+SummaryPage.new(session).open do |page|
+  summary = page.summary
+  summary[:title].should eq page.title
+  summary[:header].should eq page.header
+end
+```
+
+`form_data` macro expects the following parameters:
+
+* `Symbol` name of the method to be generated
+* `NamedTuple` with the following parameters
+  * `fields` - (required) Array(Symbol) - list of methods to be invoked and their results returned
 
 ## Development roadmap
 

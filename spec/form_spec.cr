@@ -36,7 +36,7 @@ class FormPage < WebdriverPump::Page
   form_data :read_data, { fields: [:name, :description, :gender, :predicate] }
 
   fill_form :submit_for_summary, { submit: :generate, fields: [:name, :gender, :ingredients] }
-  form_data :read_summary, { fields: [:summary_name, :summary_gender, :summary_ingredients]}
+  form_data :read_summary, { fields: [:summary_name, :summary_gender, :summary_ingredients] }
 
   element :summary_name, { locator: {id: "res_name"}, action: :text }
   element :summary_gender, { locator: {id: "res_gender"}, action: :text }

@@ -208,7 +208,10 @@ For `Pages` it points to `//body`.
 Reference to `WebdriverPump::Wait` module. Usage:
 
 ```crystal
+# with default settings
 wait.until { condition_is_met }
+
+# with custom settings
 wait.until(timeout: 19, interval: 0.3) { other_condition_is_met }
 
 # global config (optional)
@@ -218,31 +221,102 @@ WebdriverPump::Wait.interval = 0.5  # default = 0.2
 
 #### `element` macro
 
-*section under construction*
+A DSL macro to declare `WebElement`s located inside given component.
+
+```crystal
+class MyPage < WebdriverPump::Page
+  url "http://example.org"
+
+  # synopsis:
+  # element :name : Symbol, params : NamedTuple
+
+  # examples
+  # locate and return Selenium::WebElement
+  element :title1, { locator: {xpath: ".//div[@role='title']"} }
+  # equivalent of:
+  def title1
+    root.find_element(:xpath, ".//div[@role='title']")
+  end
+
+  # locate Selenium::WebElement and perform action (invoke method) on it at once
+  element :title2, { locator: {xpath: ".//div[@role='title']"}, action: :text }
+  # equivalent of:
+  def title2
+    root.find_element(:xpath, ".//div[@role='title']").text
+  end
+
+  # locate Selenium::WebElement and use it as a mounting point for another component
+  element :title3, { locator: {xpath: ".//div[@class='user_details']"}, class: UserDetails }
+  # equivalent of:
+  def title3
+    node = root.find_element(:xpath, ".//div[@role='title']")
+    UserDetails.new(session, node)
+  end
+end
+```
 
 ##### locator
 
-*section under construction*
+Required parameter. Locator of the `WebElement` in the DOM tree. Allowed formats are:
+
+* 1 element `NamedTuple` with key in (`:id`, `:name`, `:tag_name`, `:class_name`, `:css`, `:link_text`, `:partial_link_test`, `:xpath`), and a respective value.
+* a `Proc` returning `WebElement`, e.g. `-> { root.find_element(:id, "user") }`, `-> { some_wrapper_element.find_element(:id, "user") }`
 
 ##### action
 
-*section under construction*
+`Symbol`, name of `WebElement`s method to be executed.
 
 ##### class
 
-*section under construction*
+`Component` class. If provided the `WebElement` located using `locator` will be the mounting point for the component of given class.
 
 #### `elements` macro
 
-*section under construction*
+A DSL macro to declare a collection of `WebElement`s inside given component.
+
+```crystal
+class CollectionIndexedByName(T) < WebdriverPump::ComponentCollection(T)
+  def [](name)
+    ret = find { |el| el.name == name }
+    raise "Component with name='#{name}' not found" unless ret
+    ret
+  end
+end
+
+class OrderItem < WebdriverPump::Component
+  element :name, { action: :text, locator: {css: ".name"} }
+end
+
+class OrderPage < WebdriverPump::Page
+  elements :raw_order_items, { locator: {xpath: ".//li"} }
+
+  elements :order_items, {
+    locator: {xpath: ".//li"},
+    class: OrderItem,
+    collection_class: CollectionIndexedByName(OrderItem)
+  }
+end
+
+OrderPage.new(session).open do |page|
+  page.raw_order_items.class.should eq Array(Selenium::WebElement)
+  page.raw_order_items[0].class.should eq Selenium::WebElement
+
+  page.order_items.class.should eq CollectionIndexedByName(OrderItem)
+  page.order_items["Rubber hammer, 2kg"].should eq OrderItem
+end
+```
 
 ##### locator
 
-*section under construction*
+Required parameter. Same rules as for `element` macro, but returns `Array(WebElement)`.
+
+##### class
+
+Optional `Component` class to wrap each of the collection's elements.
 
 ##### collection_class
 
-*section under construction*
+Optional `ComponentCollection` class to wrap the whole collection. Useful to introduce more descriptive ways of indexing.
 
 #### Form helper macros
 

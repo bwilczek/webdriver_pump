@@ -4,42 +4,42 @@ session = WebdriverSessionHelper.session
 
 class FormPage < WebdriverPump::Page
   url "#{WebdriverSessionHelper.base_url}/form.html"
-  element_setter :name, { type: :text_field, locator: {id: "name"} }
-  element_getter :name, { type: :text_field, locator: {id: "name"} }
+  element_setter :name, {type: :text_field, locator: {id: "name"}}
+  element_getter :name, {type: :text_field, locator: {id: "name"}}
 
-  element_setter :description, { type: :text_area, locator: {id: "description"} }
-  element_getter :description, { type: :text_area, locator: {id: "description"} }
+  element_setter :description, {type: :text_area, locator: {id: "description"}}
+  element_getter :description, {type: :text_area, locator: {id: "description"}}
 
-  element_setter :gender, { type: :radio_group, locator: {name: "gender"} }
-  element_getter :gender, { type: :radio_group, locator: {name: "gender"} }
-  element_setter :predicate, { type: :radio_group, locator: {name: "predicate"} }
-  element_getter :predicate, { type: :radio_group, locator: {name: "predicate"} }
+  element_setter :gender, {type: :radio_group, locator: {name: "gender"}}
+  element_getter :gender, {type: :radio_group, locator: {name: "gender"}}
+  element_setter :predicate, {type: :radio_group, locator: {name: "predicate"}}
+  element_getter :predicate, {type: :radio_group, locator: {name: "predicate"}}
 
-  element_setter :hobbies, { type: :checkbox_group, locator: {name: "hobbies[]"} }
-  element_getter :hobbies, { type: :checkbox_group, locator: {name: "hobbies[]"} }
-  element_setter :continents, { type: :checkbox_group, locator: {name: "continents[]"} }
-  element_getter :continents, { type: :checkbox_group, locator: {name: "continents[]"} }
+  element_setter :hobbies, {type: :checkbox_group, locator: {name: "hobbies[]"}}
+  element_getter :hobbies, {type: :checkbox_group, locator: {name: "hobbies[]"}}
+  element_setter :continents, {type: :checkbox_group, locator: {name: "continents[]"}}
+  element_getter :continents, {type: :checkbox_group, locator: {name: "continents[]"}}
 
-  element_setter :confirmation, { type: :checkbox, locator: {name: "confirmation"} }
-  element_getter :confirmation, { type: :checkbox, locator: {name: "confirmation"} }
+  element_setter :confirmation, {type: :checkbox, locator: {name: "confirmation"}}
+  element_getter :confirmation, {type: :checkbox, locator: {name: "confirmation"}}
 
-  element_setter :car, { type: :select_list, locator: {name: "car"} }
-  element_getter :car, { type: :select_list, locator: {name: "car"} }
+  element_setter :car, {type: :select_list, locator: {name: "car"}}
+  element_getter :car, {type: :select_list, locator: {name: "car"}}
 
-  element_setter :ingredients, { type: :multi_select_list, locator: {name: "ingredients[]"} }
-  element_getter :ingredients, { type: :multi_select_list, locator: {name: "ingredients[]"} }
+  element_setter :ingredients, {type: :multi_select_list, locator: {name: "ingredients[]"}}
+  element_getter :ingredients, {type: :multi_select_list, locator: {name: "ingredients[]"}}
 
-  element_getter :unsupported_getter, { type: :no_such_type, locator: {id: "name"} }
-  element_setter :unsupported_setter, { type: :no_such_type, locator: {id: "name"} }
+  element_getter :unsupported_getter, {type: :no_such_type, locator: {id: "name"}}
+  element_setter :unsupported_setter, {type: :no_such_type, locator: {id: "name"}}
 
-  fill_form :submit_data, { submit: :generate, fields: [:name, :description, :gender, :predicate] }
-  form_data :read_data, { fields: [:name, :description, :gender, :predicate] }
+  fill_form :submit_data, {submit: :generate, fields: [:name, :description, :gender, :predicate]}
+  form_data :read_data, {fields: [:name, :description, :gender, :predicate]}
 
-  fill_form :submit_for_summary, { submit: :generate, fields: [:name, :gender, :ingredients] }
-  form_data :read_summary, { fields: [:summary_name, :summary_gender, :summary_ingredients] }
+  fill_form :submit_for_summary, {submit: :generate, fields: [:name, :gender, :ingredients]}
+  form_data :read_summary, {fields: [:summary_name, :summary_gender, :summary_ingredients]}
 
-  element :summary_name, { locator: {id: "res_name"}, action: :text }
-  element :summary_gender, { locator: {id: "res_gender"}, action: :text }
+  element :summary_name, {locator: {id: "res_name"}, action: :text}
+  element :summary_gender, {locator: {id: "res_gender"}, action: :text}
 
   def summary_ingredients
     root.find_elements(:xpath, ".//ul[@id='res_ingredients']/li").map { |i| i.text }
@@ -117,10 +117,10 @@ describe WebdriverPump do
   it "form helpers: fill_form/form_data(form controls)" do
     FormPage.new(session).open do |p|
       p.submit_data({
-        gender: "Female",
-        predicate: "No",
-        name: "Kasia",
-        description: "Kasia has a cat"
+        gender:      "Female",
+        predicate:   "No",
+        name:        "Kasia",
+        description: "Kasia has a cat",
       })
       data = p.read_data
       data[:gender].should eq "Female"
@@ -133,9 +133,9 @@ describe WebdriverPump do
   it "form helpers: fill_form/form_data(summary elements)" do
     FormPage.new(session).open do |p|
       p.submit_for_summary({
-        name: "Kasia",
-        gender: "Female",
-        ingredients: ["Eggplant", "Asparagus"]
+        name:        "Kasia",
+        gender:      "Female",
+        ingredients: ["Eggplant", "Asparagus"],
       })
       data = p.read_summary
       data[:summary_name].should eq "Kasia"

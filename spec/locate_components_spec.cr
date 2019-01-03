@@ -5,7 +5,7 @@ session = WebdriverSessionHelper.session
 ##############################################
 
 class ToDoListForComponentLocators < WebdriverPump::Component
-  element :title, { locator: {xpath: ".//div[@role='title']"}, action: :text }
+  element :title, {locator: {xpath: ".//div[@role='title']"}, action: :text}
 
   def info
     "info"
@@ -16,25 +16,25 @@ class ToDoListsPageForComponentLocators < WebdriverPump::Page
   url "#{WebdriverSessionHelper.base_url}/todo_lists.html"
 
   element :todo_list_one, {
-    class: ToDoListForComponentLocators,
-    locator: {id: "todos_home"}
+    class:   ToDoListForComponentLocators,
+    locator: {id: "todos_home"},
   }
   element :todo_list_two, {
-    class: ToDoListForComponentLocators,
-    locator: -> { root.find_element(:id, "todos_work") }
+    class:   ToDoListForComponentLocators,
+    locator: ->{ root.find_element(:id, "todos_work") },
   }
   elements :todo_lists, {
-    class: ToDoListForComponentLocators,
-    locator: {xpath: ".//div[@role='todo_list']"}
+    class:   ToDoListForComponentLocators,
+    locator: {xpath: ".//div[@role='todo_list']"},
   }
   elements :todo_lists_lambda, {
-    class: ToDoListForComponentLocators,
-    locator: -> { root.find_elements(:xpath, ".//div[@role='todo_list']") }
+    class:   ToDoListForComponentLocators,
+    locator: ->{ root.find_elements(:xpath, ".//div[@role='todo_list']") },
   }
   element :todo_list_info, {
-    class: ToDoListForComponentLocators,
+    class:   ToDoListForComponentLocators,
     locator: {id: "todos_home"},
-    action: :info
+    action:  :info,
   }
 end
 

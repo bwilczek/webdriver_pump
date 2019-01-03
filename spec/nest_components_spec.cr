@@ -30,39 +30,38 @@ class CollectionForShortElements(T) < WebdriverPump::ComponentCollection(T)
   end
 end
 
-
 ##############################################
 
 class ToDoListsItemForNesting < WebdriverPump::Component
-  element :name, { locator: {xpath: ".//span[@role='name']"}, action: :text }
-  element :delete, { locator: {xpath: ".//a[@role='rm']"}, action: :click }
+  element :name, {locator: {xpath: ".//span[@role='name']"}, action: :text}
+  element :delete, {locator: {xpath: ".//a[@role='rm']"}, action: :click}
 end
 
 class ToDoListsForNesting < WebdriverPump::Component
-  element :title, { locator: {xpath: ".//div[@role='title']"}, action: :text }
-  element :fill_item, { action: :send_keys, locator: {xpath: ".//input[@role='new_item']"} }
-  element :submit, { action: :click, locator: {xpath: ".//button[@role='add']"} }
+  element :title, {locator: {xpath: ".//div[@role='title']"}, action: :text}
+  element :fill_item, {action: :send_keys, locator: {xpath: ".//input[@role='new_item']"}}
+  element :submit, {action: :click, locator: {xpath: ".//button[@role='add']"}}
   elements :items, {
-    class: ToDoListsItemForNesting,
-    locator: {xpath: ".//li"},
-    collection_class: CollectionIndexedByName(ToDoListsItemForNesting)
+    class:            ToDoListsItemForNesting,
+    locator:          {xpath: ".//li"},
+    collection_class: CollectionIndexedByName(ToDoListsItemForNesting),
   }
   elements :raw_items, {
-    locator: {xpath: ".//li//span"},
-    collection_class: CollectionForShortElements(Selenium::WebElement)
+    locator:          {xpath: ".//li//span"},
+    collection_class: CollectionForShortElements(Selenium::WebElement),
   }
 
   def add(item)
     size_before = items.size
     fill_item(item)
     submit
-    wait.until { items.size == size_before+1 }
+    wait.until { items.size == size_before + 1 }
   end
 
   def delete(item)
     size_before = items.size
     items[item].delete
-    wait.until { items.size == size_before-1 }
+    wait.until { items.size == size_before - 1 }
   end
 end
 
@@ -70,9 +69,9 @@ class ToDoListsPageForNesting < WebdriverPump::Page
   url "#{WebdriverSessionHelper.base_url}/todo_lists.html?random_delay=1"
 
   elements :todo_lists, {
-    class: ToDoListsForNesting,
-    locator: {xpath: ".//div[@role='todo_list']"},
-    collection_class: CollectionIndexedByTitle(ToDoListsForNesting)
+    class:            ToDoListsForNesting,
+    locator:          {xpath: ".//div[@role='todo_list']"},
+    collection_class: CollectionIndexedByTitle(ToDoListsForNesting),
   }
 end
 

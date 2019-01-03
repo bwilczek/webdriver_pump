@@ -13,7 +13,7 @@ class WebdriverSessionHelper
       sleep 1
       capabilities = {
         browserName: "chrome",
-        platform: "ANY"
+        platform:    "ANY",
       }
       driver = Selenium::Webdriver.new
       session = Selenium::Session.new(driver, capabilities)

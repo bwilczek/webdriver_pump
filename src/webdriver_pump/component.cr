@@ -110,31 +110,23 @@ module WebdriverPump
     def initialize(@session : Selenium::Session, @root : Selenium::WebElement)
     end
 
-    def locate_element(locator)
+    def locate_element(locator : ElementLocator)
       if locator.is_a?(Proc)
-        ret = locator.call
-        raise UnexpectedElementType.new(ret.class.name) unless ret.is_a?(Selenium::WebElement)
-        return ret
-      elsif locator.is_a?(NamedTuple)
+        return locator.call
+      else # locator.is_a?(NamedTuple)
         by = locator.keys.first
         selector = locator.values.first
         return root.find_element(by, selector)
-      else
-        raise UnsupportedLocator.new(locator.class.name)
       end
     end
 
-    def locate_elements(locator)
+    def locate_elements(locator : ElementsLocator)
       if locator.is_a?(Proc)
-        ret = locator.call
-        raise UnexpectedElementType.new(ret.class.name) unless ret.is_a?(Array(Selenium::WebElement))
-        return ret
-      elsif locator.is_a?(NamedTuple)
+        locator.call
+      else # locator.is_a?(NamedTuple)
         by = locator.keys.first
         selector = locator.values.first
         return root.find_elements(by, selector)
-      else
-        raise UnsupportedLocator.new(locator.class.name)
       end
     end
 

@@ -259,7 +259,7 @@ end
 
 Required parameter. Locator of the `WebElement` in the DOM tree. Allowed formats are:
 
-* 1 element `NamedTuple` with key in (`:id`, `:name`, `:tag_name`, `:class_name`, `:css`, `:link_text`, `:partial_link_test`, `:xpath`), and a respective value.
+* 1 element `NamedTuple` with key in (`:id`, `:name`, `:tag_name`, `:class_name`, `:css`, `:link_text`, `:partial_link_text`, `:xpath`), and a respective value.
 * a `Proc` returning `WebElement`, e.g. `-> { root.find_element(:id, "user") }`, `-> { some_wrapper_element.find_element(:id, "user") }`
 
 ##### action
@@ -443,7 +443,7 @@ end
 - [x] Port WatirPump's form helpers
 - [ ] Form helper for file upload (?)
 - [x] Introduce Exception classes
-- [ ] Update README
+- [x] Update README
 - [ ] Update code documentation
 
 ## Contributing

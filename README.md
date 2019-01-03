@@ -1,5 +1,7 @@
 # webdriver_pump
 
+[![Build Status](https://travis-ci.org/bwilczek/webdriver_pump.svg?branch=master)](https://travis-ci.org/bwilczek/webdriver_pump)
+
 This shard is a Page Object Model lib, built on top of [selenium-webdriver-crystal](https://github.com/ysbaddaden/selenium-webdriver-crystal).
 It's a crystal port of ruby's watir_pump.
 

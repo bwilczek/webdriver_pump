@@ -1,8 +1,6 @@
 require "selenium"
 require "uri"
 
-require "./component"
-
 module WebdriverPump
   class Page < Component
     macro url(url)

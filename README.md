@@ -3,7 +3,7 @@
 [![Build Status](https://travis-ci.org/bwilczek/webdriver_pump.svg?branch=master)](https://travis-ci.org/bwilczek/webdriver_pump)
 
 This shard is a Page Object Model lib, built on top of [selenium-webdriver-crystal](https://github.com/ysbaddaden/selenium-webdriver-crystal).
-It's a crystal port of ruby's watir_pump.
+It's a crystal port of ruby's [watir_pump](https://github.com/bwilczek/watir_pump).
 
 ## Installation
 
@@ -46,6 +46,8 @@ end
 ## Documentation
 
 Please refer to this chapter to learn how to define your Page Objects, and use it from your tests.
+
+For complete code documentation please visit project's [GitHub Pages](https://bwilczek.github.io/webdriver_pump/).
 
 ### Overview
 
@@ -441,7 +443,6 @@ end
 - [x] Fill in complex forms: RadioGroups, SelectLists
 - [x] Parametrize Page url
 - [x] Support `loaded?` predicate for Pages
-- [x] ~Add support for base url~ do it on `webdriver` shard level
 - [x] Port WatirPump's form helpers
 - [ ] Form helper for file upload (?)
 - [x] Introduce Exception classes

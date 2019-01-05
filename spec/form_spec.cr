@@ -1,36 +1,35 @@
 require "./spec_helper"
 
+include WebdriverPump
+
 session = WebdriverSessionHelper.session
 
-class FormPage < WebdriverPump::Page
+class FormPage < Page
   url "#{WebdriverSessionHelper.base_url}/form.html"
-  element_setter :name, {type: :text_field, locator: {id: "name"}}
-  element_getter :name, {type: :text_field, locator: {id: "name"}}
+  element_setter :name, {class: TextField, locator: {id: "name"}}
+  element_getter :name, {class: TextField, locator: {id: "name"}}
 
-  element_setter :description, {type: :text_area, locator: {id: "description"}}
-  element_getter :description, {type: :text_area, locator: {id: "description"}}
+  element_setter :description, {class: TextArea, locator: {id: "description"}}
+  element_getter :description, {class: TextArea, locator: {id: "description"}}
 
-  element_setter :gender, {type: :radio_group, locator: {name: "gender"}}
-  element_getter :gender, {type: :radio_group, locator: {name: "gender"}}
-  element_setter :predicate, {type: :radio_group, locator: {name: "predicate"}}
-  element_getter :predicate, {type: :radio_group, locator: {name: "predicate"}}
+  elements_setter :gender, {class: RadioGroup, locator: {name: "gender"}}
+  elements_getter :gender, {class: RadioGroup, locator: {name: "gender"}}
+  elements_setter :predicate, {class: RadioGroup, locator: {name: "predicate"}}
+  elements_getter :predicate, {class: RadioGroup, locator: {name: "predicate"}}
 
-  element_setter :hobbies, {type: :checkbox_group, locator: {name: "hobbies[]"}}
-  element_getter :hobbies, {type: :checkbox_group, locator: {name: "hobbies[]"}}
-  element_setter :continents, {type: :checkbox_group, locator: {name: "continents[]"}}
-  element_getter :continents, {type: :checkbox_group, locator: {name: "continents[]"}}
+  elements_setter :hobbies, {class: CheckboxGroup, locator: {name: "hobbies[]"}}
+  elements_getter :hobbies, {class: CheckboxGroup, locator: {name: "hobbies[]"}}
+  elements_setter :continents, {class: CheckboxGroup, locator: {name: "continents[]"}}
+  elements_getter :continents, {class: CheckboxGroup, locator: {name: "continents[]"}}
 
-  element_setter :confirmation, {type: :checkbox, locator: {name: "confirmation"}}
-  element_getter :confirmation, {type: :checkbox, locator: {name: "confirmation"}}
+  element_setter :confirmation, {class: Checkbox, locator: {name: "confirmation"}}
+  element_getter :confirmation, {class: Checkbox, locator: {name: "confirmation"}}
 
-  element_setter :car, {type: :select_list, locator: {name: "car"}}
-  element_getter :car, {type: :select_list, locator: {name: "car"}}
+  element_setter :car, {class: SelectList, locator: {name: "car"}}
+  element_getter :car, {class: SelectList, locator: {name: "car"}}
 
-  element_setter :ingredients, {type: :multi_select_list, locator: {name: "ingredients[]"}}
-  element_getter :ingredients, {type: :multi_select_list, locator: {name: "ingredients[]"}}
-
-  element_getter :unsupported_getter, {type: :no_such_type, locator: {id: "name"}}
-  element_setter :unsupported_setter, {type: :no_such_type, locator: {id: "name"}}
+  element_setter :ingredients, {class: MultiSelectList, locator: {name: "ingredients[]"}}
+  element_getter :ingredients, {class: MultiSelectList, locator: {name: "ingredients[]"}}
 
   fill_form :submit_data, {submit: :generate, fields: [:name, :description, :gender, :predicate]}
   form_data :read_data, {fields: [:name, :description, :gender, :predicate]}
@@ -141,22 +140,6 @@ describe WebdriverPump do
       data[:summary_name].should eq "Kasia"
       data[:summary_gender].should eq "Female"
       data[:summary_ingredients].sort.should eq ["Asparagus", "Eggplant"]
-    end
-  end
-
-  it "form elements: getter raises exception for unsupported element type" do
-    FormPage.new(session).open do |p|
-      expect_raises(WebdriverPump::UnsupportedFormElement) do
-        p.unsupported_getter
-      end
-    end
-  end
-
-  it "form elements: setter raises exception for unsupported element type" do
-    FormPage.new(session).open do |p|
-      expect_raises(WebdriverPump::UnsupportedFormElement) do
-        p.unsupported_setter = "asd"
-      end
     end
   end
 end

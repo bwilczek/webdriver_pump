@@ -5,34 +5,17 @@ require "./exceptions"
 
 module WebdriverPump
   class Component
-    getter :root
+    include LocateElement
+
     getter :session
 
-    macro elements_setter(name, params)
+    macro form_element(name, params)
       def {{name.id}}=(val)
-        elements = locate_elements({{params[:locator]}})
-        {{params[:class]}}.new(elements).value = val
+        {{params[:class]}}.new(root, {{params[:locator]}}).value = val
       end
-    end
 
-    macro elements_getter(name, params)
       def {{name.id}}
-        elements = locate_elements({{params[:locator]}})
-        {{params[:class]}}.new(elements).value
-      end
-    end
-
-    macro element_setter(name, params)
-      def {{name.id}}=(val)
-        element = locate_element({{params[:locator]}})
-        {{params[:class]}}.new(element).value = val
-      end
-    end
-
-    macro element_getter(name, params)
-      def {{name.id}}
-        element = locate_element({{params[:locator]}})
-        {{params[:class]}}.new(element).value
+        {{params[:class]}}.new(root, {{params[:locator]}}).value
       end
     end
 
@@ -92,26 +75,6 @@ module WebdriverPump
     end
 
     def initialize(@session : Selenium::Session, @root : Selenium::WebElement)
-    end
-
-    def locate_element(locator : ElementLocator)
-      if locator.is_a?(Proc)
-        return locator.call
-      else # locator.is_a?(NamedTuple)
-        by = locator.keys.first
-        selector = locator.values.first
-        return root.find_element(by, selector)
-      end
-    end
-
-    def locate_elements(locator : ElementsLocator)
-      if locator.is_a?(Proc)
-        locator.call
-      else # locator.is_a?(NamedTuple)
-        by = locator.keys.first
-        selector = locator.values.first
-        return root.find_elements(by, selector)
-      end
     end
 
     def wait

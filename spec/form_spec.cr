@@ -6,30 +6,21 @@ session = WebdriverSessionHelper.session
 
 class FormPage < Page
   url "#{WebdriverSessionHelper.base_url}/form.html"
-  element_setter :name, {class: TextField, locator: {id: "name"}}
-  element_getter :name, {class: TextField, locator: {id: "name"}}
 
-  element_setter :description, {class: TextArea, locator: {id: "description"}}
-  element_getter :description, {class: TextArea, locator: {id: "description"}}
+  form_element :name, {class: TextField, locator: {id: "name"}}
+  form_element :description, {class: TextArea, locator: {id: "description"}}
 
-  elements_setter :gender, {class: RadioGroup, locator: {name: "gender"}}
-  elements_getter :gender, {class: RadioGroup, locator: {name: "gender"}}
-  elements_setter :predicate, {class: RadioGroup, locator: {name: "predicate"}}
-  elements_getter :predicate, {class: RadioGroup, locator: {name: "predicate"}}
+  form_element :gender, {class: RadioGroup, locator: {name: "gender"}}
+  form_element :predicate, {class: RadioGroup, locator: {name: "predicate"}}
 
-  elements_setter :hobbies, {class: CheckboxGroup, locator: {name: "hobbies[]"}}
-  elements_getter :hobbies, {class: CheckboxGroup, locator: {name: "hobbies[]"}}
-  elements_setter :continents, {class: CheckboxGroup, locator: {name: "continents[]"}}
-  elements_getter :continents, {class: CheckboxGroup, locator: {name: "continents[]"}}
+  form_element :hobbies, {class: CheckboxGroup, locator: {name: "hobbies[]"}}
+  form_element :continents, {class: CheckboxGroup, locator: {name: "continents[]"}}
 
-  element_setter :confirmation, {class: Checkbox, locator: {name: "confirmation"}}
-  element_getter :confirmation, {class: Checkbox, locator: {name: "confirmation"}}
+  form_element :confirmation, {class: Checkbox, locator: {name: "confirmation"}}
 
-  element_setter :car, {class: SelectList, locator: {name: "car"}}
-  element_getter :car, {class: SelectList, locator: {name: "car"}}
+  form_element :car, {class: SelectList, locator: {name: "car"}}
 
-  element_setter :ingredients, {class: MultiSelectList, locator: {name: "ingredients[]"}}
-  element_getter :ingredients, {class: MultiSelectList, locator: {name: "ingredients[]"}}
+  form_element :ingredients, {class: MultiSelectList, locator: {name: "ingredients[]"}}
 
   fill_form :submit_data, {submit: :generate, fields: [:name, :description, :gender, :predicate]}
   form_data :read_data, {fields: [:name, :description, :gender, :predicate]}

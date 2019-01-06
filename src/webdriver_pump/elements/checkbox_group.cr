@@ -1,5 +1,12 @@
 module WebdriverPump
-  class CheckboxGroup < Elements
+  class CheckboxGroup < FormElement
+    @elements : Array(Selenium::WebElement)
+
+    def initialize(@root, @locator)
+      super
+      @elements = locate_elements(@locator.as(ElementsLocator))
+    end
+
     def value
       ret = Array(String).new
       @elements.each do |el|

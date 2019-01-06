@@ -1,5 +1,12 @@
 module WebdriverPump
-  class MultiSelectList < Element
+  class MultiSelectList < FormElement
+    @element : Selenium::WebElement
+
+    def initialize(@root, @locator)
+      super
+      @element = locate_element(@locator.as(ElementLocator))
+    end
+
     def value
       ret = Array(String).new
       @element.find_elements(:xpath, ".//option").each do |option|

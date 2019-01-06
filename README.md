@@ -327,38 +327,13 @@ Optional `ComponentCollection` class to wrap the whole collection. Useful to int
 `WebDriver` API itself does not provide methods to easily set and get values of HTML form elements.
 This is where `WebdriverPump`'s form helper macros come handy.
 
-##### element_getter and element_setter
-
-These macros generate methods that set and get values for given form elements.
-Supported `types` are:
-
-* `:text_field` - expected value type: `String`
-* `:text_area` - expected value type: `String`
-* `:radio_group` - expected value type: `Array(String)`
-* `:checkbox` - expected value type: `Bool`
-* `:checkbox_group` - expected value type: `Array(String)`
-* `:select_list` - expected value type: `String`
-* `:multi_select_list` - expected value type: `Array(String)`
-
-`locator` parameter accepts the same values as for previously described macros.
-
-Example:
-
-```crystal
-class ProfilePage < WebdriverPump::Page
-  element_setter :hobbies, { type: :checkbox_group, locator: {name: "hobbies[]"} }
-  element_getter :hobbies, { type: :checkbox_group, locator: {name: "hobbies[]"} }
-end
-
-ProfilePage.new(session).open do |page|
-  page.hobbies = ["Gardening", "Knitting"]
-  page.hobbies.should eq ["Gardening", "Knitting"]
-end
-```
+**section under refactoring!! please refer to specs for up-to-date examples**
 
 ##### fill_form
 
-This macro acts as a wrapper for calling multiple `element_setter`s at once.
+**section outdated!! please refer to specs for up-to-date examples**
+
+This macro acts as a wrapper for calling multiple `form_element` setters at once.
 
 Let's consider the following example:
 
@@ -392,7 +367,9 @@ end
 
 ##### form_data
 
-This macro acts as a wrapper for calling multiple `element_getter`s at once.
+**section outdated!! please refer to specs for up-to-date examples**
+
+This macro acts as a wrapper for calling multiple `form_element` getters at once.
 It returns a `NamedTuple` with keys being the getter method names, and values the results that they return.
 
 Let's consider the following example:

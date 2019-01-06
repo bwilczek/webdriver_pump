@@ -1,5 +1,5 @@
 name: webdriver_pump
-version: 0.2.1
+version: 0.2.2
 
 authors:
   - Bartek Wilczek <bwilczek@gmail.com>
@@ -12,4 +12,3 @@ dependencies:
 crystal: 0.27.0
 
 license: MIT
-

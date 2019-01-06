@@ -26,7 +26,7 @@ module WebdriverPump
         return res if res
         sleep interval
       end
-      raise TimedOut.new
+      raise TimedOutException.new
     end
   end
 end

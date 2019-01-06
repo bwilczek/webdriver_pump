@@ -1,12 +1,5 @@
 module WebdriverPump
-  class SelectList < FormElement
-    @element : Selenium::WebElement
-
-    def initialize(@root, @locator)
-      super
-      @element = locate_element(@locator.as(ElementLocator))
-    end
-
+  class SelectList < SimpleFormElement
     def value
       @element.find_elements(:xpath, ".//option").each do |option|
         return option.text if option.selected?

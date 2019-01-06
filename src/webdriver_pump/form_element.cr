@@ -1,8 +1,14 @@
 module WebdriverPump
-  abstract class FormElement
-    include LocateElement
+  abstract class SimpleFormElement
+    def initialize(@element : Selenium::WebElement)
+    end
 
-    def initialize(@root : Selenium::WebElement, @locator : ElementLocator | ElementsLocator)
+    abstract def value
+    abstract def value=(val)
+  end
+
+  abstract class ComplexFormElement
+    def initialize(@elements : Array(Selenium::WebElement))
     end
 
     abstract def value

@@ -1,12 +1,5 @@
 module WebdriverPump
-  class RadioGroup < FormElement
-    @elements : Array(Selenium::WebElement)
-
-    def initialize(@root, @locator)
-      super
-      @elements = locate_elements(@locator.as(ElementsLocator))
-    end
-
+  class RadioGroup < ComplexFormElement
     def value
       @elements.each do |el|
         next unless el.selected?

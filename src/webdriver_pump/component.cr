@@ -5,18 +5,29 @@ require "./exceptions"
 
 module WebdriverPump
   class Component
-    include LocateElement
-
     getter :session
+    getter :root
 
     macro form_element(name, params)
-      def {{name.id}}=(val)
-        {{params[:class]}}.new(root, {{params[:locator]}}).value = val
-      end
+      {% if params[:class].resolve < SimpleFormElement %}
+        def {{name.id}}=(val)
+          {{params[:class]}}.new(locate_element({{params[:locator]}})).value = val
+        end
 
-      def {{name.id}}
-        {{params[:class]}}.new(root, {{params[:locator]}}).value
-      end
+        def {{name.id}}
+          {{params[:class]}}.new(locate_element({{params[:locator]}})).value
+        end
+      {% elsif params[:class].resolve < ComplexFormElement %}
+        def {{name.id}}=(val)
+          {{params[:class]}}.new(locate_elements({{params[:locator]}})).value = val
+        end
+
+        def {{name.id}}
+          {{params[:class]}}.new(locate_elements({{params[:locator]}})).value
+        end
+      {% else %}
+        raise InvalidFormElementException.new("#{{{params[:class]}}}")
+      {% end %}
     end
 
     macro element(name, params)
@@ -75,6 +86,26 @@ module WebdriverPump
     end
 
     def initialize(@session : Selenium::Session, @root : Selenium::WebElement)
+    end
+
+    def locate_element(locator : ElementLocator)
+      if locator.is_a?(Proc)
+        return locator.call
+      else # locator.is_a?(NamedTuple)
+        by = locator.keys.first
+        selector = locator.values.first
+        return @root.find_element(by, selector)
+      end
+    end
+
+    def locate_elements(locator : ElementsLocator)
+      if locator.is_a?(Proc)
+        locator.call
+      else # locator.is_a?(NamedTuple)
+        by = locator.keys.first
+        selector = locator.values.first
+        return @root.find_elements(by, selector)
+      end
     end
 
     def wait

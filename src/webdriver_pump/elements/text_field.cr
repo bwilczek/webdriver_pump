@@ -1,12 +1,5 @@
 module WebdriverPump
-  class TextField < FormElement
-    @element : Selenium::WebElement
-
-    def initialize(@root, @locator)
-      super
-      @element = locate_element(@locator.as(ElementLocator))
-    end
-
+  class TextField < SimpleFormElement
     def value
       @element.attribute("value")
     end

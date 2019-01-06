@@ -1,12 +1,5 @@
 module WebdriverPump
-  class Checkbox < FormElement
-    @element : Selenium::WebElement
-
-    def initialize(@root, @locator)
-      super
-      @element = locate_element(@locator.as(ElementLocator))
-    end
-
+  class Checkbox < SimpleFormElement
     def value
       @element.selected?
     end

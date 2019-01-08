@@ -327,11 +327,46 @@ Optional `ComponentCollection` class to wrap the whole collection. Useful to int
 `WebDriver` API itself does not provide methods to easily set and get values of HTML form elements.
 This is where `WebdriverPump`'s form helper macros come handy.
 
-**section under refactoring!! please refer to specs for up-to-date examples**
+##### form_element
+
+A macro that generates getter and setter methods for common HTML form elements.
+
+```crystal
+class LoginPage < WebdriverPump::Page
+  form_element :username, { class: TextField, locator: {name: "username"} }
+
+  # iis equivalent of:
+  def username
+    # some logic that gets the value of given TextField
+  end
+
+  def username=(val)
+    # some logic that sets the value of given TextField to val
+  end
+end
+
+LoginPage.new(session).open do |page|
+  page.username = "Bob"
+  page.username.should eq "Bob"
+end
+```
+
+The supported form elements are:
+
+| FormElement     | expected locator | value type    | value                                 |
+|-----------------|------------------|---------------|---------------------------------------|
+| TextField       | ElementLocator   | String        | content of the input field            |
+| TextArea        | ElementLocator   | String        | content of the text area              |  
+| RadioGroup      | ElementsLocator  | String        | label of the checked input element    |
+| CheckboxGroup   | ElementsLocator  | Array(String) | labels of the checked input elements  |
+| Checkbox        | ElementLocator   | Bool          | label of the checked input element    |
+| SelectList      | ElementLocator   | String        | label of the selected option element  |
+| MultiSelectList | ElementLocator   | Array(String) | labels of the checked option elements |
+
+Please bear in mind that some of them require a locator for a single DOM node (e.g. `TextField` for a `<input type="text" ...>`),
+while other ones require a locator for multiple DOM nodes, that consist the form element (e.g. `CheckboxGroup` for a collection of `<input type="checkbox" name="countries[] ...">`).
 
 ##### fill_form
-
-**section outdated!! please refer to specs for up-to-date examples**
 
 This macro acts as a wrapper for calling multiple `form_element` setters at once.
 
@@ -339,9 +374,9 @@ Let's consider the following example:
 
 ```crystal
 class LoginPage < WebdriverPump::Page
-  element_setter :username, { type: :text_field, locator: {name: "username"} }
-  element_setter :password, { type: :text_field, locator: {name: "password"} }
-  element :submit_form, { locator: {id: "submit"} }
+  form_element :username, { class: TextField, locator: {name: "username"} }
+  form_element :password, { class: TextField, locator: {name: "password"} }
+  element :submit_form, { locator: {id: "submit"}, action: :click }
 
   fill_form :login, { submit: :submit_form, fields: [:username, :password] }
   # equivalent of:
@@ -362,12 +397,10 @@ end
 
 * `Symbol` name of the method to be generated
 * `NamedTuple` with the following parameters
-  * `fields` - (required) Array(Symbol) - list of setters to be invoked
-  * `submit` - (optional) Symbol - name of the method to be executed after all setters
+  * `fields` - (required) `Array(Symbol)` - list of setters to be invoked
+  * `submit` - (optional) `Symbol` - name of the method to be executed after all setters
 
 ##### form_data
-
-**section outdated!! please refer to specs for up-to-date examples**
 
 This macro acts as a wrapper for calling multiple `form_element` getters at once.
 It returns a `NamedTuple` with keys being the getter method names, and values the results that they return.
@@ -376,9 +409,9 @@ Let's consider the following example:
 
 ```crystal
 class SummaryPage < WebdriverPump::Page
-  element_getter :title, { type: :text_field, locator: {name: "title"} }
+  form_element :title, { class: TextField, locator: {name: "title"} }
 
-  # form_data doesn't require `element_getters` - it will work with all methods that don't require arguments
+  # form_data doesn't require `form_element`s - it will work with all instance methods that don't require arguments
   element :header { locator: {xpath: "../h1"}, action: :text }
 
   form_data :summary, { fields: [:title, :header] }

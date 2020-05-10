@@ -20,8 +20,8 @@ module WebdriverPump
     end
 
     def self.until(*, timeout = @@timeout, interval = @@interval, &blk)
-      start = Time.now
-      while Time.now < (start + timeout.seconds)
+      start = Time.local
+      while Time.local < (start + timeout.seconds)
         res = yield
         return res if res
         sleep interval

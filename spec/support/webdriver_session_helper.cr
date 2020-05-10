@@ -18,9 +18,8 @@ class WebdriverSessionHelper
       driver = Selenium::Webdriver.new
       session = Selenium::Session.new(driver, capabilities)
 
-      at_exit do
+      Spec.after_suite do
         session.stop
-        chromedriver.kill
       end
       session
     end

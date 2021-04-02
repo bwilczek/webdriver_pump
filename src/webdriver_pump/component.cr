@@ -85,7 +85,7 @@ module WebdriverPump
       end
     end
 
-    def initialize(@session : Selenium::Session, @root : Selenium::WebElement)
+    def initialize(@session : Selenium::Session, @root : Selenium::Element)
     end
 
     def locate_element(locator : ElementLocator)
@@ -94,7 +94,7 @@ module WebdriverPump
       else # locator.is_a?(NamedTuple)
         by = locator.keys.first
         selector = locator.values.first
-        return @root.find_element(by, selector)
+        @root.find_child_element(by, selector)
       end
     end
 
@@ -104,7 +104,7 @@ module WebdriverPump
       else # locator.is_a?(NamedTuple)
         by = locator.keys.first
         selector = locator.values.first
-        return @root.find_elements(by, selector)
+        return @root.find_child_elements(by, selector)
       end
     end
 

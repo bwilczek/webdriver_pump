@@ -7,20 +7,21 @@ session = WebdriverSessionHelper.session
 class FormPage < Page
   url "#{WebdriverSessionHelper.base_url}/form.html"
 
-  form_element :name, {class: TextField, locator: {id: "name"}}
-  form_element :description, {class: TextArea, locator: {id: "description"}}
+  form_element :name, {class: TextField, locator: {css: "#name"}}
+  form_element :description, {class: TextArea, locator: {css: "#description"}}
 
-  form_element :gender, {class: RadioGroup, locator: {name: "gender"}}
-  form_element :predicate, {class: RadioGroup, locator: {name: "predicate"}}
+  form_element :gender, {class: RadioGroup, locator: {css: "[name=gender]"}}
+  form_element :predicate, {class: RadioGroup, locator: {css: "[name=predicate]"}}
 
-  form_element :hobbies, {class: CheckboxGroup, locator: {name: "hobbies[]"}}
-  form_element :continents, {class: CheckboxGroup, locator: {name: "continents[]"}}
+  # TODO: replace with name: hobbies[] as soon as it's added to selenium.cr
+  form_element :hobbies, {class: CheckboxGroup, locator: {xpath: ".//input[@name='hobbies[]']"}}
+  form_element :continents, {class: CheckboxGroup, locator: {xpath: ".//input[@name='continents[]']"}}
 
-  form_element :confirmation, {class: Checkbox, locator: {name: "confirmation"}}
+  form_element :confirmation, {class: Checkbox, locator: {css: "[name=confirmation]"}}
 
-  form_element :car, {class: SelectList, locator: {name: "car"}}
+  form_element :car, {class: SelectList, locator: {css: "[name=car]"}}
 
-  form_element :ingredients, {class: MultiSelectList, locator: {name: "ingredients[]"}}
+  form_element :ingredients, {class: MultiSelectList, locator: {xpath: ".//select[@name='ingredients[]']"}}
 
   fill_form :submit_data, {submit: :generate, fields: [:name, :description, :gender, :predicate]}
   form_data :read_data, {fields: [:name, :description, :gender, :predicate]}
@@ -28,15 +29,15 @@ class FormPage < Page
   fill_form :submit_for_summary, {submit: :generate, fields: [:name, :gender, :ingredients]}
   form_data :read_summary, {fields: [:summary_name, :summary_gender, :summary_ingredients]}
 
-  element :summary_name, {locator: {id: "res_name"}, action: :text}
-  element :summary_gender, {locator: {id: "res_gender"}, action: :text}
+  element :summary_name, {locator: {css: "#res_name"}, action: :text}
+  element :summary_gender, {locator: {css: "#res_gender"}, action: :text}
 
   def summary_ingredients
-    root.find_elements(:xpath, ".//ul[@id='res_ingredients']/li").map { |i| i.text }
+    root.find_child_elements(:xpath, ".//ul[@id='res_ingredients']/li").map { |i| i.text }
   end
 
   def generate
-    root.find_element(:id, "generate").click
+    root.find_child_element(:css, "#generate").click
   end
 end
 

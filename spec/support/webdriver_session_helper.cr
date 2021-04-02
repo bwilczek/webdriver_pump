@@ -1,4 +1,4 @@
-require "selenium/webdriver"
+require "selenium"
 
 class WebdriverSessionHelper
   @@session : Selenium::Session | Nil
@@ -9,17 +9,19 @@ class WebdriverSessionHelper
 
   def self.session
     @@session ||= begin
-      chromedriver = Process.new("chromedriver", args: {"--port=4444", "--url-base=/wd/hub"})
-      sleep 1
-      capabilities = {
-        browserName: "chrome",
-        platform:    "ANY",
-      }
-      driver = Selenium::Webdriver.new
-      session = Selenium::Session.new(driver, capabilities)
+      chrome_options = Selenium::Chrome::Capabilities::ChromeOptions.new
+      chrome_options.args = ["no-sandbox", "disable-gpu"]
+
+      capabilities = Selenium::Chrome::Capabilities.new
+      capabilities.chrome_options = chrome_options
+
+      chromedriver_path = `which chromedriver`.chomp
+
+      driver = Selenium::Driver.for(:chrome, service: Selenium::Service.chrome(driver_path: chromedriver_path))
+      session = driver.create_session(capabilities)
 
       Spec.after_suite do
-        session.stop
+        driver.stop
       end
       session
     end

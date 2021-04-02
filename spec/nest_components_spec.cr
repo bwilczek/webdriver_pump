@@ -48,7 +48,7 @@ class ToDoListsForNesting < WebdriverPump::Component
   }
   elements :raw_items, {
     locator:          {xpath: ".//li//span"},
-    collection_class: CollectionForShortElements(Selenium::WebElement),
+    collection_class: CollectionForShortElements(Selenium::Element),
   }
 
   def add(item)

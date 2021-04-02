@@ -11,7 +11,7 @@ module WebdriverPump
 
     def initialize(@session : Selenium::Session)
       # HACK: Fake root is required to match expected variable type. Proper one is set in #open
-      @root = Selenium::WebElement.new(@session, JSON.parse(%({"ELEMENT": "body"})).as_h)
+      @root = @session.find_element(:xpath, "//body")
     end
 
     def open(*, params : NamedTuple? = nil, query : NamedTuple? = nil, &blk : self -> _)
@@ -23,7 +23,7 @@ module WebdriverPump
         query_string = query.map { |k, v| "#{URI.encode(k.to_s)}=#{URI.encode(v)}" }.join("&")
         processed_url = "#{processed_url}?#{query_string}"
       end
-      session.url = processed_url
+      session.navigate_to(processed_url)
       @root = @session.find_element(:xpath, "//body")
       use(&blk)
     end

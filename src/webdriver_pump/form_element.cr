@@ -1,6 +1,6 @@
 module WebdriverPump
   abstract class SimpleFormElement
-    def initialize(@element : Selenium::WebElement)
+    def initialize(@element : Selenium::Element)
     end
 
     abstract def value
@@ -8,7 +8,7 @@ module WebdriverPump
   end
 
   abstract class ComplexFormElement
-    def initialize(@elements : Array(Selenium::WebElement))
+    def initialize(@elements : Array(Selenium::Element))
     end
 
     abstract def value

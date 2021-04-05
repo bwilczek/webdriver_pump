@@ -17,11 +17,11 @@ class ToDoListsPageForComponentLocators < WebdriverPump::Page
 
   element :todo_list_one, {
     class:   ToDoListForComponentLocators,
-    locator: {css: "#todos_home"},
+    locator: {id: "todos_home"},
   }
   element :todo_list_two, {
     class:   ToDoListForComponentLocators,
-    locator: ->{ root.find_child_element(:css, "#todos_work") },
+    locator: ->{ root.find_child_element(:id, "todos_work") },
   }
   elements :todo_lists, {
     class:   ToDoListForComponentLocators,
@@ -33,7 +33,7 @@ class ToDoListsPageForComponentLocators < WebdriverPump::Page
   }
   element :todo_list_info, {
     class:   ToDoListForComponentLocators,
-    locator: {css: "#todos_home"},
+    locator: {id: "todos_home"},
     action:  :info,
   }
 end

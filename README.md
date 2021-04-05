@@ -5,12 +5,6 @@
 This shard is a Page Object Model lib, built on top of [selenium.cr](https://github.com/matthewmcgarvey/selenium.cr).
 It's a crystal port of ruby's [watir_pump](https://github.com/bwilczek/watir_pump). Heavily inspired by [SitePrism](https://github.com/site-prism/site_prism).
 
-## WARNING
-
-The shard is being migrated from [selenium-webdriver-crystal](https://github.com/ysbaddaden/selenium-webdriver-crystal) to
-[selenium.cr](https://github.com/matthewmcgarvey/selenium.cr). At the moment locating elements by `id` or `name` is NOT SUPPORTED.
-Please use `xpath` or `css` until the missing location stratagies are implemented.
-
 ## Installation
 
 1. Add the dependency to your `shard.yml`:

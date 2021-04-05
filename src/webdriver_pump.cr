@@ -1,5 +1,5 @@
 module WebdriverPump
-  VERSION = "0.4.0"
+  VERSION = "0.4.1"
 end
 
 require "./webdriver_pump/locator"

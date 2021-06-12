@@ -1,7 +1,7 @@
 module WebdriverPump
   class TextField < SimpleFormElement
     def value
-      @element.attribute("value")
+      @element.property("value")
     end
 
     def value=(val)

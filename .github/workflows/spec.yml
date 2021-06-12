@@ -1,0 +1,30 @@
+name: Crystal Specs
+on: [push]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Install required apt packages
+        run: |
+          sudo apt-get -y install chromium-chromedriver
+      - name: Install Crystal
+        uses: oprypin/install-crystal@v1
+        with:
+          crystal: latest
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      - name: Shards install
+        run: |
+          shards install
+      - name: Run specs
+        run: |
+          crystal spec
+          crystal tool format --check
+          crystal docs
+      - name: Publish docs to GitHub Pages
+        if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./docs

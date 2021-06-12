@@ -11,6 +11,7 @@ class WebdriverSessionHelper
     @@session ||= begin
       chrome_options = Selenium::Chrome::Capabilities::ChromeOptions.new
       chrome_options.args = ["no-sandbox", "disable-gpu"]
+      chrome_options.args << "headless" if ENV.has_key?("CI")
 
       capabilities = Selenium::Chrome::Capabilities.new
       capabilities.chrome_options = chrome_options

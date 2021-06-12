@@ -1,6 +1,6 @@
 # webdriver_pump
 
-![Build Status](https://github.com/bwilczek/webdriver_pump/actions/workflows/spec/badge.svg?branch=master)
+![Build Status](https://github.com/bwilczek/webdriver_pump/actions/workflows/spec.yml/badge.svg?branch=master)
 
 This shard is a Page Object Model lib, built on top of [selenium.cr](https://github.com/matthewmcgarvey/selenium.cr).
 It's a crystal port of ruby's [watir_pump](https://github.com/bwilczek/watir_pump). Heavily inspired by [SitePrism](https://github.com/site-prism/site_prism).
